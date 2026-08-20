@@ -1,10 +1,10 @@
-const { model, Schema} = require('mongoose');
+const { model, Schema } = require('mongoose');
 
-let counting = new schema ({
+let counting = new Schema ({
     Guild: String,
     Channel: String,
     Number: Number,
     LastUser: String,
 })
 
-GPUShaderModule.exports = model('counting', counting);
+module.exports = model('counting', counting);

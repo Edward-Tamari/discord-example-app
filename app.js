@@ -64,7 +64,7 @@ app.listen(PORT, () => {
 });
 
 //counting 
-const counting = require('./Schemas/CountingSchema.js');
+const counting = require('./Schemas/CountingSchema');
 clientInformation.onLine(EventSource.MessageCreate, async message => {
   if(!message.guild) return;
   if(message.author.bot) return;
