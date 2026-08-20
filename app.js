@@ -17,7 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 // To keep track of our active games
 const activeGames = {};
-
+const { SlashCommandBuilder } = require('discord.js')
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  * Parse request body and verifies incoming requests using discord-interactions package
@@ -42,18 +42,11 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "test" command
     if (name === 'test') {
-      // Send a message into the channel where command was triggered from
+      // Send a plain text message into the channel where command was triggered from
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          flags: InteractionResponseFlags.IS_COMPONENTS_V2,
-          components: [
-            {
-              type: MessageComponentTypes.TEXT_DISPLAY,
-              // Fetches a random emoji to send from a helper function
-              content: `hello world ${getRandomEmoji()}`
-            }
-          ]
+          content: `i'm a really kool bot!`
         },
       });
     }
@@ -69,3 +62,30 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 app.listen(PORT, () => {
   console.log('Listening on port', PORT);
 });
+
+//counting 
+const counting = require('./Schemas/CountingSchema.js');
+clientInformation.onLine(EventSource.MessageCreate, async message => {
+  if(!message.guild) return;
+  if(message.author.bot) return;
+
+  const data = await counting.findOne({Guild: message.guild.id})
+  if(!data) return;
+  else{
+    if(message.channel.id !== data.Channel) return;
+
+    const number = Number(message.content); 
+
+    if(number !== data.Number){
+      return message.react('❌')
+    } else if (data.LastUser === message.author.id) {
+      message.react('❌')
+      await message.reply("same person can't count twice in a row.")
+    } else {
+      await message.react('✅')
+      data.LastUser = message.author.id;
+      data.Number++;
+      await data.save();
+    }
+  }
+})
