@@ -1,8 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionBitField } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionBitField, ChannelType } = require('discord.js');
 const counting = require('../../schemas/countingschema');
 
 module.exports = {
-    data: new SlashCommandBuilder()
+        data: new SlashCommandBuilder()
         .setName('counting')
         .setDescription("try counting! maybe you'll learn a few numbers that way!")
         .addSubcommand(command => command.setName('setup').setDescription('setup the system').addChannelOption(Option.setName('channel').setDescription('channel to start the counting in').addChannelTypes(ChannelType.GuildText).setRequired(true)))

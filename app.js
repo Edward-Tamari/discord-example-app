@@ -10,7 +10,11 @@ import {
 } from 'discord-interactions';
 import { getRandomEmoji, DiscordRequest } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
-
+import {Client, GatewayIntentBits, Events} from 'discord.js';
+//client
+const client = new Client({ intents: [
+  GatewayIntentBits.Guilds, 
+  GatewayIntentBits.GuildMessages] })
 // Create an express app
 const app = express();
 // Get port, or default to 3000
@@ -18,6 +22,7 @@ const PORT = process.env.PORT || 3000;
 // To keep track of our active games
 const activeGames = {};
 const { SlashCommandBuilder } = require('discord.js')
+
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
  * Parse request body and verifies incoming requests using discord-interactions package
@@ -64,8 +69,9 @@ app.listen(PORT, () => {
 });
 
 //counting 
+
 const counting = require('./Schemas/CountingSchema');
-clientInformation.onLine(EventSource.MessageCreate, async message => {
+client.on(Events.MessageCreate, async message => {
   if(!message.guild) return;
   if(message.author.bot) return;
 
