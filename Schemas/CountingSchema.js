@@ -1,10 +1,10 @@
-const { model, Schema } = require('mongoose');
+import mongoose from 'mongoose';
 
-let counting = new Schema ({
-    Guild: String,
-    Channel: String,
-    Number: Number,
-    LastUser: String,
-})
+const countingSchema = new mongoose.Schema({
+  Guild: String,
+  Channel: String,
+  Number: Number,
+  LastUser: String,
+});
 
-module.exports = model('counting', counting);
+export default mongoose.model('counting', countingSchema);

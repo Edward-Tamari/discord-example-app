@@ -9,19 +9,21 @@ import {
   verifyKeyMiddleware,
 } from 'discord-interactions';
 import { getRandomEmoji, DiscordRequest } from './utils.js';
-import { getShuffledOptions, getResult } from './game.js';
-import {Client, GatewayIntentBits, Events} from 'discord.js';
-//client
-const client = new Client({ intents: [
-  GatewayIntentBits.Guilds, 
-  GatewayIntentBits.GuildMessages] })
+import { Client, GatewayIntentBits } from 'discord.js';
+
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+  ],
+});
+
 // Create an express app
 const app = express();
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
 // To keep track of our active games
 const activeGames = {};
-const { SlashCommandBuilder } = require('discord.js')
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
@@ -55,7 +57,41 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         },
       });
     }
+    //counting 
+    if (name == 'counting') {
+      // Send a plain text message into the channel where command was triggered from
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: `I'M A REALLY BAD BAD BOY AND DESERVE TO BE PUNISHED`
+        },
+      });
+      // const counting = require('./Schemas/CountingSchema');
+      // client.on(Events.MessageCreate, async message => {
+      //   if (!message.guild) return;
+      //   if (message.author.bot) return;
 
+      //   const data = await counting.findOne({ Guild: message.guild.id })
+      //   if (!data) return;
+      //   else {
+      //     if (message.channel.id !== data.Channel) return;
+
+      //     const number = Number(message.content);
+
+      //     if (number !== data.Number) {
+      //       return message.react('❌')
+      //     } else if (data.LastUser === message.author.id) {
+      //       message.react('❌')
+      //       await message.reply("same person can't count twice in a row.")
+      //     } else {
+      //       await message.react('✅')
+      //       data.LastUser = message.author.id;
+      //       data.Number++;
+      //       await data.save();
+      //     }
+      //   }
+      // })
+    }
     console.error(`unknown command: ${name}`);
     return res.status(400).json({ error: 'unknown command' });
   }
@@ -68,30 +104,3 @@ app.listen(PORT, () => {
   console.log('Listening on port', PORT);
 });
 
-//counting 
-
-const counting = require('./Schemas/CountingSchema');
-client.on(Events.MessageCreate, async message => {
-  if(!message.guild) return;
-  if(message.author.bot) return;
-
-  const data = await counting.findOne({Guild: message.guild.id})
-  if(!data) return;
-  else{
-    if(message.channel.id !== data.Channel) return;
-
-    const number = Number(message.content); 
-
-    if(number !== data.Number){
-      return message.react('❌')
-    } else if (data.LastUser === message.author.id) {
-      message.react('❌')
-      await message.reply("same person can't count twice in a row.")
-    } else {
-      await message.react('✅')
-      data.LastUser = message.author.id;
-      data.Number++;
-      await data.save();
-    }
-  }
-})
